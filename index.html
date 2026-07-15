@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencatatan Renovasi Rumah</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; margin-bottom: 5px; } /* Menyesuaikan margin bawah H2 */
+        .subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-top: 0; margin-bottom: 20px; font-style: italic; } /* Style untuk keterangan baru */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background-color: #2980b9; }
+        
+        .summary { display: flex; justify-content: space-between; margin-top: 20px; padding: 15px; background: #ecf0f1; border-radius: 4px; font-weight: bold; }
+        .masuk { color: #27ae60; }
+        .keluar { color: #c0392b; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Pencatatan Renovasi Rumah</h2>
+    <p class="subtitle">Langensari 2026</p>
+
+    <form id="transactionForm">
+        <div class="form-group">
+            <label for="type">Jenis Transaksi</label>
+            <select id="type" required>
+                <option value="" disabled selected>-- Pilih --</option>
+                <option value="masuk">Uang Masuk (Anggaran)</option>
+                <option value="keluar">Belanja / Pengeluaran</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="amount">Nominal (Rp)</label>
+            <input type="text" id="amount" placeholder="Contoh: 150.000" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Keterangan</label>
+            <input type="text" id="description" placeholder="Contoh: Beli semen 3 sak" required>
+        </div>
+        <button type="submit" id="submitBtn">Simpan Catatan</button>
+    </form>
+
+    <div class="summary">
+        <div>Total Masuk: <br><span class="masuk" id="totalMasuk">Rp 0</span></div>
+        <div>Total Belanja: <br><span class="keluar" id="totalKeluar">Rp 0</span></div>
+        <div>Sisa Saldo: <br><span id="saldoAkhir">Rp 0</span></div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Keterangan</th>
+                <th>Masuk</th>
+                <th>Keluar</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            </tbody>
+    </table>
+</div>
+
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    // Kredensial Supabase Anda
+    const supabaseUrl = 'https://ephcczlqvtihmbowqxdt.supabase.co';
+    const supabaseKey = 'sb_publishable_elmpHYmIc8lj1q5tBchO6w_aM66d9Bf';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Format Rupiah untuk Tabel
+    const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+    
+    // Format Tanggal
+    const formatDate = (dateString) => {
+        const options = { day: 'numeric', month: 'short', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('id-ID', options);
+    };
+
+    // FITUR BARU: Format input dengan titik saat mengetik
+    const amountInput = document.getElementById('amount');
+    amountInput.addEventListener('input', function(e) {
+        // Hapus semua karakter selain angka (misal user mengetik huruf, akan otomatis hilang)
+        let value = this.value.replace(/[^0-9]/g, '');
+        // Tambahkan titik setiap 3 digit angka
+        this.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    });
+
+    // Fungsi Fetch Data
+    async function fetchTransactions() {
+        const { data, error } = await supabase
+            .from('transactions')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching data:', error);
+            return;
+        }
+        renderTable(data);
+    }
+
+    // Fungsi Render Tabel & Hitung Saldo
+    function renderTable(data) {
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = '';
+        
+        let totalMasuk = 0;
+        let totalKeluar = 0;
+
+        data.forEach(tx => {
+            const tr = document.createElement('tr');
+            const amt = parseFloat(tx.amount);
+            
+            if (tx.type === 'masuk') {
+                totalMasuk += amt;
+                tr.innerHTML = `
+                    <td>${formatDate(tx.created_at)}</td>
+                    <td>${tx.description}</td>
+                    <td class="masuk">${formatRupiah(amt)}</td>
+                    <td>-</td>
+                `;
+            } else {
+                totalKeluar += amt;
+                tr.innerHTML = `
+                    <td>${formatDate(tx.created_at)}</td>
+                    <td>${tx.description}</td>
+                    <td>-</td>
+                    <td class="keluar">${formatRupiah(amt)}</td>
+                `;
+            }
+            tableBody.appendChild(tr);
+        });
+
+        // Update Ringkasan
+        document.getElementById('totalMasuk').innerText = formatRupiah(totalMasuk);
+        document.getElementById('totalKeluar').innerText = formatRupiah(totalKeluar);
+        document.getElementById('saldoAkhir').innerText = formatRupiah(totalMasuk - totalKeluar);
+    }
+
+    // Submit Form (Insert Data)
+    document.getElementById('transactionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const type = document.getElementById('type').value;
+        const description = document.getElementById('description').value;
+        const submitBtn = document.getElementById('submitBtn');
+
+        // FITUR BARU: Hapus titik sebelum dikirim ke database
+        const rawAmount = document.getElementById('amount').value;
+        const amount = rawAmount.replace(/\./g, ''); // Mengubah "150.000" menjadi "150000"
+
+        submitBtn.innerText = 'Menyimpan...';
+        submitBtn.disabled = true;
+
+        const { error } = await supabase
+            .from('transactions')
+            .insert([{ type, amount, description }]);
+
+        if (error) {
+            alert('Gagal menyimpan data!');
+            console.error(error);
+        } else {
+            // Reset form
+            document.getElementById('amount').value = '';
+            document.getElementById('description').value = '';
+        }
+
+        submitBtn.innerText = 'Simpan Catatan';
+        submitBtn.disabled = false;
+    });
+
+    // Mengaktifkan Real-time Subscription
+    supabase.channel('custom-all-channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, (payload) => {
+          console.log('Perubahan terdeteksi secara real-time:', payload);
+          // Ambil ulang data terbaru untuk memperbarui tabel dan saldo
+          fetchTransactions();
+      })
+      .subscribe();
+
+    // Load data pertama kali saat web dibuka
+    fetchTransactions();
+</script>
+</body>
+</html>
