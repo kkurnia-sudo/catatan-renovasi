@@ -115,14 +115,14 @@
 
     const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
     
-    // Format tanggal untuk di dalam tabel (agar tetap ringkas: 15 Jul 26)
+    // Format tanggal untuk di dalam tabel (contoh: 15 Jul 26)
     const formatDate = (dateString) => {
         if (!dateString) return '';
         const options = { day: 'numeric', month: 'short', year: '2-digit' };
         return new Date(dateString).toLocaleDateString('id-ID', options);
     };
 
-    // Menetapkan tanggal hari ini secara default pada input
+    // Menetapkan tanggal hari ini secara default pada form input
     const tglInput = document.getElementById('tanggal');
     const today = new Date().toISOString().split('T')[0];
     tglInput.value = today;
@@ -138,7 +138,8 @@
         const { data, error } = await supabase
             .from('transactions')
             .select('*')
-            .order('created_at', { ascending: false });
+            // Memastikan data diurutkan dari ID terbesar (terbaru) ke terkecil
+            .order('id', { ascending: false });
 
         if (error) {
             console.error('Error fetching data:', error);
@@ -186,20 +187,30 @@
     document.getElementById('transactionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const created_at = document.getElementById('tanggal').value;
-        const type = document.getElementById('type').value;
-        const description = document.getElementById('description').value;
         const submitBtn = document.getElementById('submitBtn');
-
-        const rawAmount = document.getElementById('amount').value;
-        const amount = rawAmount.replace(/\./g, ''); 
-
         submitBtn.innerText = 'Menyimpan...';
         submitBtn.disabled = true;
 
+        // MENGAMBIL TANGGAL DARI FORM DAN JAM DARI HP SAAT INI
+        const tanggalInput = document.getElementById('tanggal').value;
+        const now = new Date();
+        const jam = String(now.getHours()).padStart(2, '0');
+        const menit = String(now.getMinutes()).padStart(2, '0');
+        const detik = String(now.getSeconds()).padStart(2, '0');
+        
+        // Menggabungkan menjadi format YYYY-MM-DD HH:MM:SS untuk Supabase
+        const created_at_lengkap = `${tanggalInput} ${jam}:${menit}:${detik}`;
+
+        const type = document.getElementById('type').value;
+        const description = document.getElementById('description').value;
+        
+        // Menghapus titik pada angka sebelum masuk database
+        const rawAmount = document.getElementById('amount').value;
+        const amount = rawAmount.replace(/\./g, ''); 
+
         const { error } = await supabase
             .from('transactions')
-            .insert([{ created_at, type, amount, description }]);
+            .insert([{ created_at: created_at_lengkap, type, amount, description }]);
 
         if (error) {
             alert('Gagal menyimpan data!');
