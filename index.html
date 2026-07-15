@@ -5,55 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pencatatan Renovasi Rumah</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #2c3e50; margin-bottom: 5px; } /* Menyesuaikan margin bawah H2 */
-        .subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-top: 0; margin-bottom: 20px; font-style: italic; } /* Style untuk keterangan baru */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 15px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; margin-bottom: 5px; font-size: 22px; } 
+        .subtitle { text-align: center; color: #7f8c8d; font-size: 13px; margin-top: 0; margin-bottom: 20px; font-style: italic; } 
+        
+        /* PEMBARUAN CSS: Layout Form 2 Kolom untuk Mobile */
+        .form-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .form-row .form-group { flex: 1; margin-bottom: 0; }
+        
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        button { width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 15px; font-weight: bold; cursor: pointer; }
         button:hover { background-color: #2980b9; }
         
-        .summary { display: flex; justify-content: space-between; margin-top: 20px; padding: 15px; background: #ecf0f1; border-radius: 4px; font-weight: bold; }
+        .summary { margin-top: 20px; padding: 15px; background: #ecf0f1; border-radius: 4px; font-size: 15px; }
+        .summary div { padding: 8px 0; border-bottom: 1px solid #bdc3c7; font-weight: bold; }
+        .summary div:last-child { border-bottom: none; }
+        .summary span { float: right; } 
         .masuk { color: #27ae60; }
         .keluar { color: #c0392b; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        /* Penyesuaian Tabel agar muat di layar HP */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+        th, td { padding: 8px 5px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background-color: #f8f9fa; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Pencatatan Renovasi Rumah</h2>
+    <h2>Pencatatan Pembuatan Gudang</h2>
     <p class="subtitle">Langensari 2026</p>
 
     <form id="transactionForm">
-        <div class="form-group">
-            <label for="type">Jenis Transaksi</label>
-            <select id="type" required>
-                <option value="" disabled selected>-- Pilih --</option>
-                <option value="masuk">Uang Masuk (Anggaran)</option>
-                <option value="keluar">Belanja / Pengeluaran</option>
-            </select>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="tanggal">Tanggal</label>
+                <input type="date" id="tanggal" required>
+            </div>
+            <div class="form-group">
+                <label for="type">Transaksi</label>
+                <select id="type" required>
+                    <option value="" disabled selected>-- Pilih --</option>
+                    <option value="masuk">Masuk</option>
+                    <option value="keluar">Keluar</option>
+                </select>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="amount">Nominal (Rp)</label>
-            <input type="text" id="amount" placeholder="Contoh: 150.000" required>
-        </div>
-        <div class="form-group">
-            <label for="description">Keterangan</label>
-            <input type="text" id="description" placeholder="Contoh: Beli semen 3 sak" required>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="amount">Nominal (Rp)</label>
+                <input type="text" id="amount" placeholder="Cth: 50.000" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Keterangan</label>
+                <input type="text" id="description" placeholder="Cth: Beli semen" required>
+            </div>
         </div>
         <button type="submit" id="submitBtn">Simpan Catatan</button>
     </form>
 
     <div class="summary">
-        <div>Total Masuk: <br><span class="masuk" id="totalMasuk">Rp 0</span></div>
-        <div>Total Belanja: <br><span class="keluar" id="totalKeluar">Rp 0</span></div>
-        <div>Sisa Saldo: <br><span id="saldoAkhir">Rp 0</span></div>
+        <div>Total Masuk: <span class="masuk" id="totalMasuk">Rp 0</span></div>
+        <div>Total Belanja: <span class="keluar" id="totalKeluar">Rp 0</span></div>
+        <div>Sisa Saldo: <span id="saldoAkhir">Rp 0</span></div>
     </div>
 
     <table>
@@ -78,25 +95,23 @@
     const supabaseKey = 'sb_publishable_elmpHYmIc8lj1q5tBchO6w_aM66d9Bf';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Format Rupiah untuk Tabel
     const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
     
-    // Format Tanggal
+    // Memperpendek format bulan agar muat di HP (Misal: 15 Okt 26)
     const formatDate = (dateString) => {
-        const options = { day: 'numeric', month: 'short', year: 'numeric' };
+        const options = { day: 'numeric', month: 'short', year: '2-digit' };
         return new Date(dateString).toLocaleDateString('id-ID', options);
     };
 
-    // FITUR BARU: Format input dengan titik saat mengetik
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('tanggal').value = today;
+
     const amountInput = document.getElementById('amount');
     amountInput.addEventListener('input', function(e) {
-        // Hapus semua karakter selain angka (misal user mengetik huruf, akan otomatis hilang)
         let value = this.value.replace(/[^0-9]/g, '');
-        // Tambahkan titik setiap 3 digit angka
         this.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     });
 
-    // Fungsi Fetch Data
     async function fetchTransactions() {
         const { data, error } = await supabase
             .from('transactions')
@@ -110,7 +125,6 @@
         renderTable(data);
     }
 
-    // Fungsi Render Tabel & Hitung Saldo
     function renderTable(data) {
         const tableBody = document.getElementById('tableBody');
         tableBody.innerHTML = '';
@@ -142,53 +156,50 @@
             tableBody.appendChild(tr);
         });
 
-        // Update Ringkasan
         document.getElementById('totalMasuk').innerText = formatRupiah(totalMasuk);
         document.getElementById('totalKeluar').innerText = formatRupiah(totalKeluar);
         document.getElementById('saldoAkhir').innerText = formatRupiah(totalMasuk - totalKeluar);
     }
 
-    // Submit Form (Insert Data)
     document.getElementById('transactionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        const created_at = document.getElementById('tanggal').value;
         const type = document.getElementById('type').value;
         const description = document.getElementById('description').value;
         const submitBtn = document.getElementById('submitBtn');
 
-        // FITUR BARU: Hapus titik sebelum dikirim ke database
         const rawAmount = document.getElementById('amount').value;
-        const amount = rawAmount.replace(/\./g, ''); // Mengubah "150.000" menjadi "150000"
+        const amount = rawAmount.replace(/\./g, ''); 
 
         submitBtn.innerText = 'Menyimpan...';
         submitBtn.disabled = true;
 
         const { error } = await supabase
             .from('transactions')
-            .insert([{ type, amount, description }]);
+            .insert([{ created_at, type, amount, description }]);
 
         if (error) {
             alert('Gagal menyimpan data!');
             console.error(error);
         } else {
-            // Reset form
             document.getElementById('amount').value = '';
             document.getElementById('description').value = '';
+            // Fokus otomatis kembali ke nominal setelah simpan
+            document.getElementById('amount').focus();
         }
 
         submitBtn.innerText = 'Simpan Catatan';
         submitBtn.disabled = false;
     });
 
-    // Mengaktifkan Real-time Subscription
     supabase.channel('custom-all-channel')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, (payload) => {
           console.log('Perubahan terdeteksi secara real-time:', payload);
-          // Ambil ulang data terbaru untuk memperbarui tabel dan saldo
           fetchTransactions();
       })
       .subscribe();
 
-    // Load data pertama kali saat web dibuka
     fetchTransactions();
 </script>
 </body>
