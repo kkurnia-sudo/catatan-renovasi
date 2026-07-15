@@ -3,27 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Manajemen Renovasi</title>
+    <title>Pencatatan Renovasi Rumah</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 15px; }
         .container { max-width: 600px; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: #2c3e50; margin-bottom: 5px; font-size: 22px; } 
         .subtitle { text-align: center; color: #7f8c8d; font-size: 13px; margin-top: 0; margin-bottom: 20px; font-style: italic; } 
         
-        /* CSS LAYAR LOGIN & DASHBOARD */
-        #loginScreen, #dashboardScreen, #appScreen { display: none; }
-        #loginScreen { text-align: center; margin-top: 50px; }
-        .pin-input { font-size: 24px; text-align: center; letter-spacing: 5px; margin-bottom: 15px; padding: 10px; width: 80%; border: 1px solid #ddd; border-radius: 8px; }
-        
-        .dash-btn { padding: 15px; font-size: 16px; margin-bottom: 10px; background-color: #2980b9; color: white; border: none; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; cursor: pointer; font-weight: bold; }
-        .dash-btn:hover { background-color: #1a5276; }
-        .logout-btn { background-color: #e74c3c; margin-top: 20px; }
-        .logout-btn:hover { background-color: #c0392b; }
-        .back-btn { background-color: #7f8c8d; margin-bottom: 15px; width: auto; padding: 8px 15px; font-size: 14px; color: white; border: none; border-radius: 4px; cursor: pointer; }
-
-        /* FORM BAAWAAN */
         .form-row { display: flex; gap: 10px; margin-bottom: 15px; }
         .form-row .form-group { flex: 1; margin-bottom: 0; }
+        
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; }
         input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
         button { width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 15px; font-weight: bold; cursor: pointer; }
@@ -36,210 +25,121 @@
         .masuk { color: #27ae60; }
         .keluar { color: #c0392b; }
 
+        /* PEMBARUAN CSS: Header Riwayat & Filter Box */
         .header-container { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; margin-bottom: 10px; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
         .header-container h3 { margin: 0; font-size: 16px; color: #2c3e50; }
         .btn-filter { width: auto; padding: 5px 12px; font-size: 13px; background-color: #f39c12; }
+        .btn-filter:hover { background-color: #e67e22; }
         
         .filter-box { display: none; background: #fdfefe; padding: 12px; border-radius: 4px; border: 1px solid #bdc3c7; margin-bottom: 15px; }
-        .table-container { max-height: 250px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; }
+        
+        /* Tabel Scroll */
+        .table-container { 
+            max-height: 250px; 
+            overflow-y: auto; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+        }
+        
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th, td { padding: 8px 5px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f8f9fa; position: sticky; top: 0; z-index: 1; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        
+        th { 
+            background-color: #f8f9fa; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1); 
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <h2>Pencatatan Pembuatan Gudang</h2>
+    <p class="subtitle">Langensari 2026</p>
 
-    <div id="loginScreen" style="display: block;">
-        <h2>Login Sistem</h2>
-        <p class="subtitle">SBR PUTRA</p>
-        <div style="margin-top: 30px;">
-            <label>Masukkan PIN Akses:</label>
-            <input type="password" id="pinInput" class="pin-input" placeholder="••••">
-            <button id="loginBtn" style="background-color: #27ae60;">Masuk</button>
+    <form id="transactionForm">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="tanggal">Tanggal</label>
+                <input type="date" id="tanggal" required>
+            </div>
+            <div class="form-group">
+                <label for="type">Transaksi</label>
+                <select id="type" required>
+                    <option value="" disabled selected>-- Pilih --</option>
+                    <option value="masuk">Masuk</option>
+                    <option value="keluar">Keluar</option>
+                </select>
+            </div>
         </div>
-    </div>
-
-    <div id="dashboardScreen">
-        <h2>Dashboard Utama</h2>
-        <p class="subtitle">Selamat datang</p>
         
-        <div style="margin-top: 30px;">
-            <button class="dash-btn" onclick="bukaAplikasi('transactions', 'Pencatatan Pembuatan Gudang')">
-                🏗️ Pembuatan Gudang
-            </button>
-            <button class="dash-btn" onclick="bukaAplikasi('pembayaran_tukang', 'Pembayaran Tukang')">
-                👷 Pembayaran Tukang
-            </button>
-            <button class="dash-btn logout-btn" onclick="logout()">
-                🚪 Keluar (Logout)
-            </button>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="amount">Nominal (Rp)</label>
+                <input type="text" id="amount" placeholder="Cth: 50.000" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Keterangan</label>
+                <input type="text" id="description" placeholder="Cth: Beli semen" required>
+            </div>
+        </div>
+        <button type="submit" id="submitBtn">Simpan Catatan</button>
+    </form>
+
+    <div class="summary">
+        <div>Total Masuk: <span class="masuk" id="totalMasuk">Rp 0</span></div>
+        <div>Total Belanja: <span class="keluar" id="totalKeluar">Rp 0</span></div>
+        <div>Sisa Saldo: <span id="saldoAkhir">Rp 0</span></div>
+    </div>
+
+    <div class="header-container">
+        <h3>Riwayat Pencatatan</h3>
+        <button type="button" id="toggleFilterBtn" class="btn-filter">📅 Filter</button>
+    </div>
+
+    <div id="filterBox" class="filter-box">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Dari Tanggal</label>
+                <input type="date" id="filterStart">
+            </div>
+            <div class="form-group">
+                <label>Sampai Tanggal</label>
+                <input type="date" id="filterEnd">
+            </div>
+        </div>
+        <div class="form-row" style="margin-bottom: 0;">
+            <button type="button" id="applyFilterBtn" style="background-color: #27ae60;">Terapkan</button>
+            <button type="button" id="resetFilterBtn" style="background-color: #95a5a6;">Reset</button>
         </div>
     </div>
 
-    <div id="appScreen">
-        <button class="back-btn" onclick="kembaliKeDashboard()">⬅ Kembali ke Dashboard</button>
-        
-        <h2 id="appTitle">Judul Aplikasi</h2>
-        <p class="subtitle">SBR PUTRA</p>
-
-        <form id="transactionForm">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="tanggal">Tanggal</label>
-                    <input type="date" id="tanggal" required>
-                </div>
-                <div class="form-group">
-                    <label for="type">Transaksi</label>
-                    <select id="type" required>
-                        <option value="" disabled selected>-- Pilih --</option>
-                        <option value="masuk">Masuk</option>
-                        <option value="keluar">Keluar</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="amount">Nominal (Rp)</label>
-                    <input type="text" id="amount" placeholder="Cth: 50.000" required>
-                </div>
-                <div class="form-group">
-                    <label for="description">Keterangan</label>
-                    <input type="text" id="description" placeholder="Cth: Beli semen" required>
-                </div>
-            </div>
-            <button type="submit" id="submitBtn">Simpan Catatan</button>
-        </form>
-
-        <div class="summary">
-            <div>Total Masuk: <span class="masuk" id="totalMasuk">Rp 0</span></div>
-            <div>Total Belanja: <span class="keluar" id="totalKeluar">Rp 0</span></div>
-            <div>Sisa Saldo: <span id="saldoAkhir">Rp 0</span></div>
-        </div>
-
-        <div class="header-container">
-            <h3>Riwayat Pencatatan</h3>
-            <button type="button" id="toggleFilterBtn" class="btn-filter">📅 Filter</button>
-        </div>
-
-        <div id="filterBox" class="filter-box">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Dari Tanggal</label>
-                    <input type="date" id="filterStart">
-                </div>
-                <div class="form-group">
-                    <label>Sampai Tanggal</label>
-                    <input type="date" id="filterEnd">
-                </div>
-            </div>
-            <div class="form-row" style="margin-bottom: 0;">
-                <button type="button" id="applyFilterBtn" style="background-color: #27ae60;">Terapkan</button>
-                <button type="button" id="resetFilterBtn" style="background-color: #95a5a6;">Reset</button>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Ket</th>
-                        <th>Masuk</th>
-                        <th>Keluar</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                </tbody>
-            </table>
-        </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Keterangan</th>
+                    <th>Masuk</th>
+                    <th>Keluar</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
     </div>
-
 </div>
 
 <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // KREDENSIAL SUPABASE
+    // Kredensial Supabase Anda
     const supabaseUrl = 'https://ephcczlqvtihmbowqxdt.supabase.co';
     const supabaseKey = 'sb_publishable_elmpHYmIc8lj1q5tBchO6w_aM66d9Bf';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // VARIABEL GLOBAL PENTING
-    let tabelAktif = ''; // Akan berubah menjadi 'transactions' atau 'pembayaran_tukang'
-    let realtimeChannel = null;
-    let filterStartDate = '';
-    let filterEndDate = '';
-
-    // ==========================================
-    // LOGIKA NAVIGASI (LOGIN, DASHBOARD, APP)
-    // ==========================================
-    
-    // Fungsi cek PIN
-    function prosesLogin() {
-        const pin = document.getElementById('pinInput').value;
-        if(pin === '8000') { // <-- UBAH PIN DI SINI (Default: 1234)
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('dashboardScreen').style.display = 'block';
-            document.getElementById('pinInput').value = ''; 
-        } else {
-            alert('PIN Salah! Silakan coba lagi.');
-            document.getElementById('pinInput').value = ''; 
-        }
-    }
-
-    // Eksekusi Login via Tombol
-    document.getElementById('loginBtn').addEventListener('click', prosesLogin);
-
-    // Eksekusi Login via tombol "Enter" di keyboard HP
-    document.getElementById('pinInput').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            prosesLogin();
-        }
-    });
-
-    window.logout = function() {
-        document.getElementById('dashboardScreen').style.display = 'none';
-        document.getElementById('appScreen').style.display = 'none';
-        document.getElementById('loginScreen').style.display = 'block';
-        
-        if (realtimeChannel) {
-            supabase.removeChannel(realtimeChannel);
-        }
-    };
-
-    window.kembaliKeDashboard = function() {
-        document.getElementById('appScreen').style.display = 'none';
-        document.getElementById('dashboardScreen').style.display = 'block';
-        
-        document.getElementById('resetFilterBtn').click();
-        
-        if (realtimeChannel) {
-            supabase.removeChannel(realtimeChannel);
-        }
-    };
-
-    window.bukaAplikasi = function(namaTabel, judul) {
-        tabelAktif = namaTabel;
-        document.getElementById('appTitle').innerText = judul;
-        
-        document.getElementById('dashboardScreen').style.display = 'none';
-        document.getElementById('appScreen').style.display = 'block';
-        
-        realtimeChannel = supabase.channel('custom-all-channel')
-            .on('postgres_changes', { event: '*', schema: 'public', table: tabelAktif }, (payload) => {
-                fetchTransactions();
-            })
-            .subscribe();
-
-        fetchTransactions(); 
-    };
-
-    // ==========================================
-    // FORMATTER & INPUT HANDLER
-    // ==========================================
     const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
     
     const formatDate = (dateString) => {
@@ -258,9 +158,11 @@
         this.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     });
 
-    // ==========================================
-    // LOGIKA FILTER RENTANG WAKTU
-    // ==========================================
+    // VARIABEL GLOBAL UNTUK MENYIMPAN FILTER TANGGAL
+    let filterStartDate = '';
+    let filterEndDate = '';
+
+    // LOGIKA TOMBOL FILTER
     document.getElementById('toggleFilterBtn').addEventListener('click', () => {
         const fBox = document.getElementById('filterBox');
         fBox.style.display = (fBox.style.display === 'none' || fBox.style.display === '') ? 'block' : 'none';
@@ -274,7 +176,7 @@
             alert('Harap pilih "Dari Tanggal" dan "Sampai Tanggal"!');
             return;
         }
-        fetchTransactions(); 
+        fetchTransactions(); // Panggil ulang data dengan filter
     });
 
     document.getElementById('resetFilterBtn').addEventListener('click', () => {
@@ -282,19 +184,20 @@
         document.getElementById('filterEnd').value = '';
         filterStartDate = '';
         filterEndDate = '';
+        
+        // Tutup kotak filternya
         document.getElementById('filterBox').style.display = 'none'; 
-        fetchTransactions(); 
+        fetchTransactions(); // Panggil ulang semua data (tanpa filter)
     });
 
-    // ==========================================
-    // DATABASE HANDLER (FETCH & INSERT)
-    // ==========================================
     async function fetchTransactions() {
+        // Query dasar
         let query = supabase
-            .from(tabelAktif)
+            .from('transactions')
             .select('*')
             .order('id', { ascending: false });
 
+        // JIKA ADA FILTER TANGGAL YANG AKTIF, TAMBAHKAN KE QUERY SUPABASE
         if (filterStartDate && filterEndDate) {
             query = query
                 .gte('created_at', `${filterStartDate} 00:00:00`)
@@ -367,7 +270,7 @@
         const amount = rawAmount.replace(/\./g, ''); 
 
         const { error } = await supabase
-            .from(tabelAktif)
+            .from('transactions')
             .insert([{ created_at: created_at_lengkap, type, amount, description }]);
 
         if (error) {
@@ -383,6 +286,13 @@
         submitBtn.disabled = false;
     });
 
+    supabase.channel('custom-all-channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, (payload) => {
+          fetchTransactions();
+      })
+      .subscribe();
+
+    fetchTransactions();
 </script>
 </body>
 </html>
