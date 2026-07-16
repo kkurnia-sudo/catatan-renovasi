@@ -46,9 +46,14 @@
         .badge-split-cash { background: #d4efdf; color: #1e8449; }
         .badge-split-tf { background: #d6eaf8; color: #2874a6; }
 
-        .aksi-btns button { width: auto; padding: 4px 8px; font-size: 12px; margin-right: 2px; border-radius: 3px; }
-        .btn-edit { background-color: #f39c12; }
-        .btn-delete { background-color: #e74c3c; }
+        /* Style Baru Untuk Tombol Aksi Tabel */
+        .btn-action { background-color: #95a5a6; color: white; padding: 5px 8px; font-size: 12px; border-radius: 4px; width: auto; display: inline-block; }
+        .btn-action:hover { background-color: #7f8c8d; }
+
+        /* Style Tombol Modal Aksi */
+        .btn-edit { background-color: #f39c12; margin-bottom: 10px; }
+        .btn-delete { background-color: #e74c3c; margin-bottom: 10px; }
+        .btn-cancel { background-color: #bdc3c7; color: #333; }
 
         .export-row { margin-top: 15px; }
         .btn-print { background-color: #2c3e50; }
@@ -57,43 +62,30 @@
         .btn-jpg:hover { background-color: #732d91; }
 
         /* =========================================
-           STYLE VIRTUAL STRUK (TIDAK BOLEH TERPOTONG)
+           STYLE VIRTUAL STRUK (Untuk Output Cetak Fisik)
            ========================================= */
         #receiptCaptureContainer {
-            /* Elemen ini disembunyikan dari layar tapi tetap berukuran penuh 380px agar canvas membacanya utuh */
-            position: fixed;
-            top: -9999px; 
-            left: 0;
-            width: 380px; 
-            z-index: -999;
-            background: #ffffff;
+            position: fixed; top: -9999px; left: 0; width: 380px; z-index: -999; background: #ffffff;
         }
         .receipt-preview {
-            width: 380px; 
-            background: #ffffff;
-            color: #000000;
-            padding: 20px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 13px; /* Ukuran font dinaikkan sedikit agar lebih rapi */
-            line-height: 1.4;
-            box-sizing: border-box;
+            width: 380px; background: #ffffff; color: #000000; padding: 20px;
+            font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.4; box-sizing: border-box;
         }
         .receipt-preview h2, .receipt-preview p { text-align: center; margin: 0; }
         .receipt-preview h2 { font-size: 16px; text-transform: uppercase; }
         .receipt-preview .divider { border-top: 1px dashed #000; margin: 10px 0; }
         
-        /* PEMBARUAN: Sistem tabel yang lebih kokoh agar angka tidak turun baris */
         .receipt-preview table { width: 100%; font-size: 12px; border-collapse: collapse; table-layout: fixed; }
         .receipt-preview th, .receipt-preview td { padding: 6px 2px; border: none; border-bottom: 1px dashed #ccc; vertical-align: top; }
         .col-tgl { width: 22%; }
-        .col-ket { width: 43%; word-wrap: break-word; } /* Membungkus teks panjang */
-        .col-jml { width: 35%; text-align: right; white-space: nowrap; } /* Mencegah angka terpotong turun baris */
+        .col-ket { width: 43%; word-wrap: break-word; }
+        .col-jml { width: 35%; text-align: right; white-space: nowrap; } 
         
         .receipt-preview .summary-section { margin-top: 10px; font-weight: bold; }
         .receipt-preview .summary-section div { display: flex; justify-content: space-between; padding: 2px 0; }
 
         /* =========================================
-           MODAL PRINT PREVIEW
+           MODAL UMUM (OVERLAY)
            ========================================= */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -102,48 +94,32 @@
         .modal-overlay.active { display: flex; }
         .modal-content {
             background: white; border-radius: 8px; width: 95%; max-width: 420px;
-            max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;
+            max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; padding: 15px;
+            box-sizing: border-box;
         }
         .modal-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px; border-bottom: 1px solid #ddd; background: #f8f9fa;
+            padding-bottom: 10px; border-bottom: 1px solid #ddd; margin-bottom: 15px;
         }
         .modal-header h3 { margin: 0; font-size: 16px; color: #2c3e50; }
         .close-modal { font-size: 24px; cursor: pointer; color: #e74c3c; line-height: 1; }
-        .modal-body {
-            flex: 1; padding: 15px; background: #ecf0f1;
-            /* Pembaruan agar pengguna HP layar kecil bisa menggeser preview ke kanan tanpa memotong gambar asli */
-            overflow-x: auto;
-            overflow-y: auto;
-        }
-        #modalPreviewContent {
-            background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            width: 380px; /* Lebar dikunci di 380px di dalam modal */
-            margin: 0 auto;
-        }
-        .modal-footer {
-            padding: 15px; border-top: 1px solid #ddd; background: #fff;
-            display: flex; gap: 10px; 
-        }
-        .modal-footer button { flex: 1; }
+        
+        /* Modal Preview Struk Khusus */
+        #printModal .modal-content { padding: 0; }
+        #printModal .modal-header { padding: 15px; background: #f8f9fa; margin-bottom: 0; }
+        #printModal .modal-body { flex: 1; padding: 15px; background: #ecf0f1; overflow-x: auto; overflow-y: auto; }
+        #modalPreviewContent { background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 380px; margin: 0 auto; }
+        #printModal .modal-footer { padding: 15px; border-top: 1px solid #ddd; background: #fff; display: flex; gap: 10px; }
+        #printModal .modal-footer button { flex: 1; }
 
         /* =========================================
            STYLE CETAK (HANYA AKTIF SAAT PROSES PRINT)
            ========================================= */
         @media print {
             body * { visibility: hidden; }
-            #receiptCaptureContainer, #receiptCaptureContainer * { 
-                visibility: visible; 
-            }
-            #receiptCaptureContainer {
-                position: absolute; left: 0; top: 0; width: 100%;
-            }
-            .receipt-preview { 
-                width: 100% !important; 
-                max-width: none !important;
-                padding: 0 !important; 
-                margin: 0 !important; 
-            }
+            #receiptCaptureContainer, #receiptCaptureContainer * { visibility: visible; }
+            #receiptCaptureContainer { position: absolute; left: 0; top: 0; width: 100%; }
+            .receipt-preview { width: 100% !important; max-width: none !important; padding: 0 !important; margin: 0 !important; }
         }
     </style>
 </head>
@@ -239,7 +215,7 @@
                     <th>Keterangan</th>
                     <th>Masuk</th>
                     <th>Keluar</th>
-                    <th class="col-aksi">Aksi</th>
+                    <th style="text-align:center;">Aksi</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
@@ -248,7 +224,41 @@
     </div>
     
     <div class="export-row">
-        <button type="button" id="btnShowPrintPreview" class="btn-print">🖨️ Cetak</button>
+        <button type="button" id="btnShowPrintPreview" class="btn-print">🖨️ Cetak Data Terpilih</button>
+    </div>
+</div>
+
+<div id="actionModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 280px; text-align: center;">
+        <h3 style="margin-top:0; margin-bottom: 15px; color:#2c3e50;">Pilih Aksi</h3>
+        <button type="button" id="btnTriggerEdit" class="btn-edit">✏️ Edit Data</button>
+        <button type="button" id="btnTriggerDelete" class="btn-delete">🗑️ Hapus Data</button>
+        <button type="button" id="closeActionModal" class="btn-cancel">Batal</button>
+    </div>
+</div>
+
+<div id="editModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Catatan</h3>
+            <span class="close-modal" id="closeEditModal">&times;</span>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label>Keterangan</label>
+            <input type="text" id="editDescription">
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label>Nominal (Rp)</label>
+            <input type="text" id="editAmount">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label>Metode</label>
+            <select id="editMetode">
+                <option value="Cash">Cash</option>
+                <option value="Transfer">Transfer</option>
+            </select>
+        </div>
+        <button type="button" id="btnSaveEdit" style="background-color: #27ae60;">Simpan Perubahan</button>
     </div>
 </div>
 
@@ -256,14 +266,14 @@
     <div class="modal-content">
         <div class="modal-header">
             <h3>Pratinjau Struk</h3>
-            <span class="close-modal" id="closeModal">&times;</span>
+            <span class="close-modal" id="closePrintModal">&times;</span>
         </div>
         <div class="modal-body">
             <div id="modalPreviewContent"></div>
         </div>
         <div class="modal-footer">
             <button type="button" id="btnModalSaveJpg" class="btn-jpg">📸 Simpan Gambar</button>
-            <button type="button" id="btnConfirmPrint" class="btn-print">🖨️ Cetak Fisik</button>
+            <button type="button" id="btnConfirmPrint" class="btn-print">🖨️ Lanjut Cetak</button>
         </div>
     </div>
 </div>
@@ -306,6 +316,7 @@
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const PIN_AKSES = "8000";
+    let activeEditId = null;
 
     const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
     
@@ -332,6 +343,7 @@
     setupRupiahInput('amount');
     setupRupiahInput('amountCash');
     setupRupiahInput('amountTransfer');
+    setupRupiahInput('editAmount'); // Setup form edit
 
     const tglInput = document.getElementById('tanggal');
     const dateNow = new Date();
@@ -408,13 +420,14 @@
             if(tx.metode === 'Cash') badgeClass += ' badge-split-cash';
             if(tx.metode === 'Transfer') badgeClass += ' badge-split-tf';
 
-            const metodeHtml = tx.metode ? `<br><span class="${badgeClass}">${tx.metode}</span>` : '';
+            const metodeStr = tx.metode ? tx.metode : 'Cash'; // Default
+            const metodeHtml = `<br><span class="${badgeClass}">${metodeStr}</span>`;
             const deskripsiLengkap = `${tx.description} ${metodeHtml}`;
             
+            // TOMBOL AKSI TUNGGAL DIPERBARUI
             const aksiHtml = `
-                <td class="col-aksi aksi-btns">
-                    <button class="btn-edit" data-id="${tx.id}" data-desc="${tx.description}" data-amt="${amt}">✏️</button>
-                    <button class="btn-delete" data-id="${tx.id}">🗑️</button>
+                <td style="text-align:center;">
+                    <button class="btn-action" data-id="${tx.id}" data-desc="${tx.description}" data-amt="${amt}" data-met="${metodeStr}">⚙️</button>
                 </td>
             `;
             
@@ -451,9 +464,8 @@
             const amt = parseFloat(tx.amount);
             const prefix = tx.type === 'masuk' ? '(+) ' : '(-) ';
             
-            // Format angka menjadi Rapi agar muat (tanpa embel-embel Rp jika panjang)
             const formatAngka = formatRupiah(amt).replace('Rp', '').trim();
-            const metodeTeks = tx.metode ? `[${tx.metode}]` : '';
+            const metodeTeks = tx.metode ? `[${tx.metode}]` : '[Cash]';
 
             tr.innerHTML = `
                 <td class="col-tgl">${formatDate(tx.created_at)}</td>
@@ -468,37 +480,87 @@
         document.getElementById('rcSaldoAkhir').innerText = formatRupiah(tMasuk - tKeluar);
     }
 
-    document.getElementById('tableBody').addEventListener('click', async (e) => {
-        const btnEdit = e.target.closest('.btn-edit');
-        const btnDelete = e.target.closest('.btn-delete');
+    // EVENT DELEGATION UNTUK TOMBOL AKSI TUNGGAL (⚙️)
+    const actionModal = document.getElementById('actionModal');
+    let currentDataObj = {};
 
-        if (btnDelete) {
-            const pin = prompt("Masukkan 4 digit PIN:");
-            if (pin !== PIN_AKSES) return alert("PIN Salah!");
-            if (!confirm("Hapus data ini?")) return;
-            
-            const { error } = await supabase.from('transactions').delete().eq('id', btnDelete.dataset.id);
-            if (error) alert("Gagal!"); else fetchTransactions();
-        }
-
-        if (btnEdit) {
-            const pin = prompt("Masukkan 4 digit PIN:");
-            if (pin !== PIN_AKSES) return alert("PIN Salah!");
-
-            const id = btnEdit.dataset.id;
-            const newDesc = prompt("Keterangan baru:", btnEdit.dataset.desc);
-            if (!newDesc) return;
-
-            let newAmtInput = prompt("Nominal baru (tanpa titik):", btnEdit.dataset.amt);
-            if (!newAmtInput) return;
-            
-            const newAmt = newAmtInput.replace(/[^0-9]/g, '');
-
-            const { error } = await supabase.from('transactions').update({ description: newDesc, amount: newAmt }).eq('id', id);
-            if (error) alert("Gagal!"); else fetchTransactions();
+    document.getElementById('tableBody').addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-action');
+        if (btn) {
+            // Simpan data dari baris yang diklik
+            currentDataObj = {
+                id: btn.dataset.id,
+                desc: btn.dataset.desc,
+                amt: btn.dataset.amt,
+                metode: btn.dataset.met
+            };
+            // Tampilkan Modal Pilihan Aksi
+            actionModal.classList.add('active');
         }
     });
 
+    // TUTUP MODAL AKSI
+    document.getElementById('closeActionModal').addEventListener('click', () => {
+        actionModal.classList.remove('active');
+    });
+
+    // JIKA PILIH HAPUS
+    document.getElementById('btnTriggerDelete').addEventListener('click', async () => {
+        actionModal.classList.remove('active'); // Tutup pop-up opsi
+        const pin = prompt("Masukkan 4 digit PIN untuk menghapus:");
+        if (pin !== PIN_AKSES) return alert("PIN Salah atau dibatalkan!");
+        if (!confirm("Yakin hapus data ini?")) return;
+        
+        const { error } = await supabase.from('transactions').delete().eq('id', currentDataObj.id);
+        if (error) alert("Gagal menghapus!"); else fetchTransactions();
+    });
+
+    // JIKA PILIH EDIT (Buka Form Modal Edit)
+    const editModal = document.getElementById('editModal');
+    
+    document.getElementById('btnTriggerEdit').addEventListener('click', () => {
+        actionModal.classList.remove('active'); // Tutup pop-up opsi
+        const pin = prompt("Masukkan 4 digit PIN untuk mengedit:");
+        if (pin !== PIN_AKSES) return alert("PIN Salah atau dibatalkan!");
+
+        // Isi form dengan data lama
+        activeEditId = currentDataObj.id;
+        document.getElementById('editDescription').value = currentDataObj.desc;
+        document.getElementById('editAmount').value = formatRupiah(currentDataObj.amt).replace('Rp', '').trim();
+        document.getElementById('editMetode').value = currentDataObj.metode;
+
+        // Tampilkan Modal Edit
+        editModal.classList.add('active');
+    });
+
+    document.getElementById('closeEditModal').addEventListener('click', () => {
+        editModal.classList.remove('active');
+    });
+
+    // SIMPAN PERUBAHAN EDIT
+    document.getElementById('btnSaveEdit').addEventListener('click', async () => {
+        const newDesc = document.getElementById('editDescription').value;
+        const newAmtInput = document.getElementById('editAmount').value;
+        const newMetode = document.getElementById('editMetode').value;
+
+        if (!newDesc || !newAmtInput) return alert("Keterangan dan Nominal wajib diisi!");
+        const newAmt = newAmtInput.replace(/[^0-9]/g, '');
+
+        const { error } = await supabase.from('transactions').update({ 
+            description: newDesc, 
+            amount: newAmt,
+            metode: newMetode
+        }).eq('id', activeEditId);
+
+        if (error) {
+            alert("Gagal mengedit data!");
+        } else {
+            editModal.classList.remove('active');
+            fetchTransactions();
+        }
+    });
+
+    // SIMPAN CATATAN BARU
     document.getElementById('transactionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const type = document.getElementById('type').value;
@@ -546,28 +608,24 @@
 
     const printModal = document.getElementById('printModal');
     
-    // BUKA MODAL PREVIEW (Menampilkan Desain Template Struk Utuh)
     document.getElementById('btnShowPrintPreview').addEventListener('click', () => {
-        // Ambil elemen penuh dari template yang disembunyikan
         const receiptHtml = document.getElementById('receiptTemplate').outerHTML;
         document.getElementById('modalPreviewContent').innerHTML = receiptHtml;
         printModal.classList.add('active');
     });
 
-    document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('closePrintModal').addEventListener('click', () => {
         printModal.classList.remove('active');
     });
 
-    // SIMPAN GAMBAR
     document.getElementById('btnModalSaveJpg').addEventListener('click', () => {
-        // PEMBARUAN: Memotret dari template rahasia yang tidak terikat batas ukuran layar modal
         const hiddenReceiptElement = document.getElementById('receiptTemplate');
         
         html2canvas(hiddenReceiptElement, { 
-            scale: 3, // Agar jernih
+            scale: 3, 
             backgroundColor: "#ffffff",
-            width: 380, // Ditetapkan mutlak
-            windowWidth: 380 // Mengecoh html2canvas jika dilayar kecil
+            width: 380, 
+            windowWidth: 380 
         }).then(canvas => {
             const link = document.createElement('a');
             link.download = `Struk_Gudang_${new Date().getTime()}.jpg`;
